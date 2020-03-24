@@ -20,7 +20,7 @@ permalink: /search/
 </script>
 
 
-<h2>Categories</h2>
+<h1>Categories</h1>
 
 <div id="archives">
 {% for category in site.categories %}
