@@ -1,6 +1,5 @@
 ---
 layout: page
-title: Search
 permalink: /search/
 ---
 
@@ -20,6 +19,8 @@ permalink: /search/
     });
 </script>
 
+
+<h2>Categories</h2>
 
 <div id="archives">
 {% for category in site.categories %}
