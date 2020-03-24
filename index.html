@@ -7,13 +7,17 @@ layout: default
     <article class="post">
       <a href="{{ site.baseurl }}{{ post.url }}">
         <h1>{{ post.title }}</h1>
-      </a>
 
-      <div>
-        <p class="post_date">{{ post.date | date: "%B %e, %Y" }}</p>
+        <div>
+          <p class="post_date">{{ post.date | date: "%B %e, %Y" }}</p>
+        </div>
+      </a>
+      <div class="entry">
+        {{ post.excerpt }}
       </div>
 
-      <div class="post-tags">
+      <a href="{{ site.baseurl }}{{ post.url }}" class="read-more">Read More</a>
+      <div>
         {% if post %}
           {% assign categories = post.categories %}
         {% else %}
@@ -24,12 +28,6 @@ layout: default
           {% unless forloop.last %}&nbsp;{% endunless %}
         {% endfor %}
       </div>
-
-      <div class="entry">
-        {{ post.excerpt }}
-      </div>
-
-      <a href="{{ site.baseurl }}{{ post.url }}" class="read-more">Read More</a>
     </article>
   {% endfor %}
 
