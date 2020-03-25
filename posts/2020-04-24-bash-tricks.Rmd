@@ -34,8 +34,7 @@ As an example, say `gunzip`-ing a file failed halfway through for some-reason, y
 
 It is my strong opinion that bash scripts should have at least the following line at the top of the script (after the shebang).
 
-
-```bash
+```{bash}
 set -eu
 
 # This is sometimes used too.
@@ -50,8 +49,7 @@ set -eu
 A few people will be aware that you can define arrays in bash.
 These are roughly analagous to lists or vectors in other languages.
 
-
-```bash
+```{bash}
 # Define the array. Elements should be separated by what's in your IFS environment variable (usually a space).
 ARR=( one two three four )
 
@@ -74,15 +72,6 @@ echo "${#ARR}"
 echo "${!ARR[@]}"
 ```
 
-```
-## one two three four
-## one
-## one
-## 4
-## 3
-## 0 1 2 3
-```
-
 Sadly you can't have nested arrays, but you could nest space delimited strings and fudge it if you _really_ wanted to.
 
 
@@ -90,8 +79,7 @@ Sadly you can't have nested arrays, but you could nest space delimited strings a
 
 You may not know that bash has what they call "associative arrays" which are basically dictionaries or hashmaps (NB. this requires bash version > 4).
 
-
-```bash
+```{bash}
 # Defining requires explicit declaraton
 declare -A AARR
 AARR=([one]=1 [two]=2 [three]=3 [four]=4 [five]="5 6")
@@ -109,14 +97,6 @@ echo ${!AARR[@]} # All keys
 echo ${#AARR[@]} # Number of elements
 ```
 
-```
-## Get key two 2
-## Get key six 6
-## Print all values 5 6 2 3 4 6 1
-## five two three four six one
-## 6
-```
-
 
 ## Returning arrays from functions
 
@@ -126,8 +106,7 @@ There are a few weird and wonderful ways to do this (that work with things other
 
 #### Option 1. echo the string (Regular arrays only)
 
-
-```bash
+```{bash}
 myfun () {
     MYARR=(1 2 3)
     echo "${MYARR[@]}"
@@ -137,17 +116,12 @@ MYARR=( $(myfun) )
 echo "${MYARR[@]}"
 ```
 
-```
-## 1 2 3
-```
-
 
 #### Option 2. Declare as a global variable.
 
 This option is most definitely **not** recommended.
 
-
-```bash
+```{bash}
 myfun2 () {
     declare -g -A MYARR2=([one]=1 [two]=2)
 }
@@ -159,19 +133,13 @@ myfun2
 echo "After call: ${MYARR2[one]:-unset}"
 ```
 
-```
-## Before call: unset
-## After call: 1
-```
-
 
 #### Option 3. Return a declare string
 
 This is most flexible but esoteric option.
 This will work with associative arrays and function too, so you could do some wacky metaprogramming things.
 
-
-```bash
+```{bash}
 myfun3 () {
     declare -A MYARR3=([one]=1 [two]=2)
     declare -p MYARR3
@@ -184,20 +152,13 @@ eval $(myfun3)
 echo "After eval: ${MYARR3[one]:-unset}"
 ```
 
-```
-## Return of myfun: declare -A MYARR3=([two]="2" [one]="1" )
-## Before eval: unset
-## After eval: 1
-```
-
 
 ## Parameter expansion
 
 Bash has some basic string manipulation facilities what work on variables, which for some reason is known as "parameter expansion" in their documentation.
 This is super useful for dealing with filenames in scripts.
 
-
-```bash
+```{bash}
 FILENAME="hello.txt"
 
 # Delete characters up to and including first '.'
@@ -207,16 +168,10 @@ echo "#*." ${FILENAME#*.}
 echo "%.*" ${FILENAME%.*}
 ```
 
-```
-## #*. txt
-## %.* hello
-```
-
 Note that `#` matches characters from the beginning of the string, and `%` matches characters from the end.
 Both of these versions will only match to the first instance of the pattern, so if we have multiple extensions, we might need to use the greedy versions `##` and `%%`.
 
-
-```bash
+```{bash}
 FILENAME2="my.fastq.gz"
 
 echo "Original       : ${FILENAME2}"
@@ -247,18 +202,6 @@ echo "/#my/your      :" ${FILENAME2/#my/your}
 echo "/#/mydir/      :" ${FILENAME2/#/mydir/}
 ```
 
-```
-## Original       : my.fastq.gz
-## %.*            : my.fastq
-## %%.*           : my
-## /fastq/tar     : my.tar.gz
-## /./DOT         : myDOTfastq.gz
-## //./DOT        : myDOTfastqDOTgz
-## /%fastq.gz/tgz : my.tgz
-## /#my/your      : your.fastq.gz
-## /#/mydir/      : mydir/my.fastq.gz
-```
-
 
 ## Parameter expansion in arrays
 
@@ -268,8 +211,7 @@ We can actually do something like vectorised string manipulation, which I find r
 Basically, you do the same operations as above, but you take an array and add the `[@]` element selector.
 
 
-
-```bash
+```{bash}
 # Define an array with some filenames.
 ARR=( my1.fastq.gz my2.fastq.gz )
 
@@ -293,23 +235,13 @@ echo "BAMS:" ${BAMS[@]}
 echo "BAIS:" ${BAIS[@]}
 ```
 
-```
-## /%.*/.bam/      : my1.bam my2.bam
-## /%fastq.gz/bam  : my1.bam my2.bam
-## /#/mydir/       : mydir/my1.fastq.gz mydir/my2.fastq.gz
-## 
-## BAMS: mydir/my1.bam mydir/my2.bam
-## BAIS: mydir/my1.bam.bai mydir/my2.bam.bai
-```
-
 
 ## Brace expansion
 
 A final useful thing is a special kind of globbing pattern called brace expansion.
 This is really handy for making combinations of strings.
 
-
-```bash
+```{bash}
 echo "Repeat string for multiple values."
 echo file_{0,two,"spa ces",}.txt
 echo "sample_R"{1,2}".fastq.gz"
@@ -322,35 +254,12 @@ echo file.{txt,csv} # Will work
 echo -e cat{erpillar,_{dog,duck}}
 ```
 
-```
-## Repeat string for multiple values.
-## file_0.txt file_two.txt file_spa ces.txt file_.txt
-## sample_R1.fastq.gz sample_R2.fastq.gz
-## file.{txt, csv }
-## file.txt file.csv
-## caterpillar cat_dog cat_duck
-```
-
 
 You can also use this to write out a range of number similar to the `seq` command using the `{start..end..step}` syntax (step is optional).
 
-
-```bash
+```{bash}
 # Useful for writing out parameter grid searches...
 echo -e "-k "{50..90..10}{" --optional-arg",}"\n" | sed 's/^\s*//g'
-```
-
-```
-## -k 50 --optional-arg
-## -k 50
-## -k 60 --optional-arg
-## -k 60
-## -k 70 --optional-arg
-## -k 70
-## -k 80 --optional-arg
-## -k 80
-## -k 90 --optional-arg
-## -k 90
 ```
 
 
@@ -360,27 +269,15 @@ So apart from regular bash scripts and day-to-day linux-y things, these features
 
 As a small bit of setup, we have a tsv files containing details of some fastq files.
 
-
-```bash
+```{bash}
 cat ./2020-04-24-bash-tricks.tsv
-```
-
-```
-## platform	flowcell	lane	adapter_index	sample	sample_index	read1_file	read2_file
-## illumina	CAU9HANXX	L001	GAGATTCC-AGGCGAAG	WAC13529	52	52_CAU9HANXX_GAGATTCC-AGGCGAAG_L001_R1.fastq.gz	52_CAU9HANXX_GAGATTCC-AGGCGAAG_L001_R2.fastq.gz
-## illumina	CAU9HANXX	L002	GAGATTCC-AGGCGAAG	WAC13529	52	52_CAU9HANXX_GAGATTCC-AGGCGAAG_L002_R1.fastq.gz	52_CAU9HANXX_GAGATTCC-AGGCGAAG_L002_R2.fastq.gz
-## illumina	CBBV2ANXX	L001	GAGATTCC-AGGCGAAG	WAC13529	52	52_CBBV2ANXX_GAGATTCC-AGGCGAAG_L001_R1.fastq.gz	52_CBBV2ANXX_GAGATTCC-AGGCGAAG_L001_R2.fastq.gz
-## illumina	CAU9HANXX	L001	CTGAAGCT-AGGCGAAG	WAC13532	55	55_CAU9HANXX_CTGAAGCT-AGGCGAAG_L001_R1.fastq.gz	55_CAU9HANXX_CTGAAGCT-AGGCGAAG_L001_R2.fastq.gz
-## illumina	CAU9HANXX	L002	CTGAAGCT-AGGCGAAG	WAC13532	55	55_CAU9HANXX_CTGAAGCT-AGGCGAAG_L002_R1.fastq.gz	55_CAU9HANXX_CTGAAGCT-AGGCGAAG_L002_R2.fastq.gz
-## illumina	CBBV2ANXX	L001	CTGAAGCT-AGGCGAAG	WAC13532	55	55_CBBV2ANXX_CTGAAGCT-AGGCGAAG_L001_R1.fastq.gz	55_CBBV2ANXX_CTGAAGCT-AGGCGAAG_L001_R2.fastq.gz
 ```
 
 Now we can use some of these tools to process files in parallel, selecting a parameter- and data-set to use based on an integer.
 The integer could be an MPI rank, or something specific to your cluster (e.g. on slurm `SLURM_PROCID` and `SLURM_ARRAY_TASK_ID`).
 
 
-
-```bash
+```{bash}
 # Set up a parameter grid to search
 # see also the readarray command in `man bash`, reads file lines as array.
 PSETS=( $(echo -e "-k "{50..90..10}{" --optional-arg",}"\n" | sed 's/^\s*//g' | head -n-1) )
@@ -446,19 +343,6 @@ R2_ARR=( ${PARAMS[read2_file]} )
 
 # Print out or run a command
 echo somekindofaligner ${R1_ARR[@]/#/--in1 indir/} ${R1_ARR[@]/#/--in2 indir/} ${PSET} --out "outdir/${SAMPLE}.bam"
-```
-
-```
-## These are the samples: WAC13529 WAC13532
-## NTASKS: 50
-## 
-## Sample is: WAC13529
-## Paramset is: -k
-## 
-## PARAMS[read1_file]: 52_CAU9HANXX_GAGATTCC-AGGCGAAG_L001_R1.fastq.gz 52_CAU9HANXX_GAGATTCC-AGGCGAAG_L002_R1.fastq.gz 52_CBBV2ANXX_GAGATTCC-AGGCGAAG_L001_R1.fastq.gz
-## PARAMS[flowcell]: CAU9HANXX CAU9HANXX CBBV2ANXX
-## 
-## somekindofaligner --in1 indir/52_CAU9HANXX_GAGATTCC-AGGCGAAG_L001_R1.fastq.gz --in1 indir/52_CAU9HANXX_GAGATTCC-AGGCGAAG_L002_R1.fastq.gz --in1 indir/52_CBBV2ANXX_GAGATTCC-AGGCGAAG_L001_R1.fastq.gz --in2 indir/52_CAU9HANXX_GAGATTCC-AGGCGAAG_L001_R1.fastq.gz --in2 indir/52_CAU9HANXX_GAGATTCC-AGGCGAAG_L002_R1.fastq.gz --in2 indir/52_CBBV2ANXX_GAGATTCC-AGGCGAAG_L001_R1.fastq.gz -k --out outdir/WAC13529.bam
 ```
 
 
