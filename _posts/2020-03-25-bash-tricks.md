@@ -262,7 +262,7 @@ echo "/#/mydir/      :" ${FILENAME2/#/mydir/}
 
 ## Parameter expansion in arrays
 
-Parameter expansion really comes into it's own when we apply it to arrays.
+Parameter expansion really comes into its own when we apply it to arrays.
 We can actually do something like vectorised string manipulation, which I find really useful for HPC batch scripting.
 
 Basically, you do the same operations as above, but you take an array and add the `[@]` element selector.
@@ -362,7 +362,7 @@ As a small bit of setup, we have a tsv files containing details of some fastq fi
 
 
 ```bash
-cat ./2020-04-24-bash-tricks.tsv
+cat ./2020-03-25-bash-tricks.tsv
 ```
 
 ```
@@ -385,7 +385,7 @@ The integer could be an MPI rank, or something specific to your cluster (e.g. on
 # see also the readarray command in `man bash`, reads file lines as array.
 PSETS=( $(echo -e "-k "{50..90..10}{" --optional-arg",}"\n" | sed 's/^\s*//g' | head -n-1) )
 
-TABLE="2020-04-24-bash-tricks.tsv"
+TABLE="2020-03-25-bash-tricks.tsv"
 
 # Read samples into an array
 SAMPLES=( $(awk 'NR > 1 {print $5}' "${TABLE}" | uniq) )
